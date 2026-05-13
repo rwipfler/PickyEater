@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Picky Eater — Filter the noise. Find your truth.</title>
+<style>
+:root{--bg:#07070f;--sf:#0d0d1a;--bd:#1c1c38;--tx:#ddddf0;--mt:#7777aa;--ac:#9d1f6e;--ab:#c8359a;--gn:#00e87a;--rd:#ff4455;--am:#ffaa00;--mo:'Courier New',monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--tx);font-family:'Helvetica Neue',Arial,sans-serif;font-size:15px;line-height:1.6}
+.app{min-height:100vh;position:relative}
+.app.i1{--bd:#2a1a48}.app.i2{--bd:#3a1a58;--sf:#0d0d22}.app.i3{--ac:#c0296e;--bg:#08070f}
+body.i3{background:#08070f}
+.app.i3 .nbrand{animation:bpulse 3s infinite}
+@keyframes bpulse{0%,100%{color:var(--ab)}50%{color:var(--ac)}}
+.nav{position:sticky;top:0;background:rgba(7,7,15,.97);border-bottom:1px solid var(--bd);z-index:50;padding:0 1.25rem;display:flex;align-items:center;gap:.65rem;height:52px;backdrop-filter:blur(8px)}
+.nbrand{font-family:var(--mo);font-size:13px;font-weight:700;color:var(--ab);letter-spacing:.12em;cursor:pointer;white-space:nowrap}
+.nlinks{display:flex;gap:.75rem;flex:1;overflow-x:auto;scrollbar-width:none}
+.nlinks::-webkit-scrollbar{display:none}
+.nl{font-size:11px;color:var(--mt);cursor:pointer;padding:3px 0;border-bottom:2px solid transparent;font-family:var(--mo);white-space:nowrap;transition:all .2s}
+.nl:hover,.nl.act{color:var(--tx);border-color:var(--ac)}
+.nl.thr{color:var(--ab);animation:bpulse 2s infinite}
+.hearts{font-family:var(--mo);font-size:13px;letter-spacing:2px;margin-left:auto;white-space:nowrap;flex-shrink:0}
+.h-empty{color:var(--bd)}.h-filled{color:var(--ac)}
+.app.i3 .h-filled{color:var(--rd)}
+.pg{display:none}.pg.act{display:block}
+.hero{padding:3rem 2rem 2.5rem;text-align:center;border-bottom:1px solid var(--bd)}
+.mascot-wrap{display:inline-block;cursor:pointer;transition:transform .2s;margin-bottom:.75rem}
+.mascot-wrap:hover{transform:scale(1.07) rotate(-4deg)}
+.mcap{font-family:var(--mo);font-size:11px;color:var(--mt);margin-bottom:1.25rem;min-height:16px;transition:all .4s}
+.h1{font-size:2.3rem;font-weight:600;margin-bottom:.65rem;line-height:1.2}
+.hsub{font-size:1rem;color:var(--mt);max-width:510px;margin:0 auto 1.5rem}
+.hextra{font-family:var(--mo);font-size:12px;color:var(--ac);margin-bottom:.75rem;display:none}
+.app.i3 .hextra{display:block}
+.cnt{font-family:var(--mo);font-size:11px;color:var(--mt);margin-top:.6rem}
+.dlb{background:var(--ac);color:#fff;border:none;padding:11px 30px;font-size:13px;font-family:var(--mo);border-radius:3px;cursor:pointer;letter-spacing:.08em;transition:all .2s}
+.dlb:hover{background:var(--ab)}
+.dlm{font-family:var(--mo);font-size:11px;color:var(--mt);margin-top:.5rem;min-height:16px}
+.dlm.w{color:var(--am)}.dlm.d{color:var(--rd)}.dlm.s{color:var(--gn)}
+.feats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--bd);border-top:1px solid var(--bd);border-bottom:1px solid var(--bd)}
+.fc{background:var(--bg);padding:1.5rem}
+.fc h3{font-family:var(--mo);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ab);margin-bottom:.5rem}
+.fc p{font-size:12px;color:var(--mt);line-height:1.75}
+.ftag{display:inline-block;margin-top:.5rem;font-family:var(--mo);font-size:9px;color:var(--rd);border:1px solid var(--rd);padding:1px 5px;border-radius:2px}
+.testis{padding:2rem;border-bottom:1px solid var(--bd)}
+.testis h2{font-family:var(--mo);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mt);text-align:center;margin-bottom:1.25rem}
+.tgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;max-width:840px;margin:0 auto}
+.tc{background:var(--sf);border:1px solid var(--bd);border-radius:3px;padding:.9rem}
+.tc p{font-size:12px;font-style:italic;line-height:1.65;margin-bottom:.5rem}
+.tn{font-family:var(--mo);font-size:9px;color:var(--mt);font-style:normal}
+.sec{padding:2.5rem 2rem;max-width:840px;margin:0 auto}
+.stit{font-family:var(--mo);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mt);margin-bottom:1.5rem;padding-bottom:.65rem;border-bottom:1px solid var(--bd)}
+.ngrid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.nc{background:var(--sf);border:1px solid var(--bd);border-radius:3px;padding:1rem;cursor:pointer;transition:border-color .2s}
+.nc:hover{border-color:var(--ac)}.nc.an{border-color:var(--gn)}
+.nh{display:flex;align-items:center;gap:.4rem;margin-bottom:.35rem}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--gn)}.dot.off{background:var(--mt)}.dot.exp{background:var(--am);animation:bpulse 1s infinite}
+.nn{font-family:var(--mo);font-size:11px;font-weight:700;letter-spacing:.05em}
+.nloc{font-size:11px;color:var(--mt);margin-bottom:.5rem}
+.ndet{font-family:var(--mo);font-size:10px;color:var(--mt);line-height:1.8}
+.nst{font-family:var(--mo);font-size:10px;font-weight:700}
+.nst.a{color:var(--gn)}.nst.o{color:var(--mt)}.nst.e{color:var(--am)}
+.nex{margin-top:.65rem;padding-top:.65rem;border-top:1px solid var(--bd);font-size:11px;color:var(--mt);display:none;line-height:1.75}
+.nc.open .nex{display:block}
+.bp{border-bottom:1px solid var(--bd);padding:1.5rem 0}
+.pmeta{font-family:var(--mo);font-size:9px;color:var(--mt);margin-bottom:.3rem}
+.ptit{font-size:1.05rem;font-weight:600;margin-bottom:.3rem;cursor:pointer;transition:color .2s}
+.ptit:hover{color:var(--ab)}
+.ptog{font-family:var(--mo);font-size:9px;color:var(--ac);cursor:pointer;display:inline-block}
+.pbody{font-size:12px;color:var(--mt);line-height:1.8;display:none;margin-top:.65rem}
+.pbody.open{display:block}
+.cmts{margin-top:1rem;padding-top:.85rem;border-top:1px solid var(--bd)}
+.cmt{margin-bottom:.5rem;padding:.6rem;background:var(--sf);border-radius:3px;border-left:2px solid var(--bd)}
+.cu{font-family:var(--mo);font-size:9px;color:var(--ac)}.cd{font-family:var(--mo);font-size:8px;color:var(--mt)}
+.ct{font-size:11px;color:var(--mt);margin-top:.2rem;line-height:1.6}
+.fqi{border-bottom:1px solid var(--bd);padding:1rem 0;cursor:pointer}
+.fqq{font-family:var(--mo);font-size:11px;color:var(--tx);display:flex;justify-content:space-between;align-items:center;gap:.5rem}
+.fqa{font-size:12px;color:var(--mt);margin-top:.65rem;line-height:1.8;display:none}
+.fqa.open{display:block}
+.warn{color:var(--am);font-family:var(--mo);font-size:10px;font-weight:700}
+.pwf{background:var(--sf);border:1px solid var(--bd);border-radius:3px;padding:1.75rem;max-width:360px;margin:1.75rem auto;text-align:center}
+.pwf h3{font-family:var(--mo);font-size:10px;letter-spacing:.1em;color:var(--mt);margin-bottom:1rem}
+.pwi{width:100%;background:var(--bg);border:1px solid var(--bd);color:var(--tx);font-family:var(--mo);font-size:13px;padding:8px 12px;border-radius:3px;margin-bottom:.65rem;text-align:center;letter-spacing:.2em;outline:none}
+.pwi:focus{border-color:var(--ac)}
+.pws{background:transparent;border:1px solid var(--ac);color:var(--ac);font-family:var(--mo);font-size:10px;padding:6px 18px;border-radius:3px;cursor:pointer;letter-spacing:.1em;transition:all .2s}
+.pws:hover{background:var(--ac);color:#fff}
+.pwe{font-family:var(--mo);font-size:9px;color:var(--rd);margin-top:.35rem;min-height:14px}
+.uc{background:var(--sf);border:1px solid var(--bd);border-radius:3px;padding:.85rem;margin-bottom:.65rem;cursor:pointer;transition:border-color .2s}
+.uc:hover{border-color:var(--ac)}
+.uh{display:flex;align-items:center;justify-content:space-between;gap:.5rem}
+.uid{font-family:var(--mo);font-size:11px;color:var(--ac);font-weight:700}
+.ust{font-family:var(--mo);font-size:9px;padding:1px 5px;border-radius:2px}
+.ust.a{color:var(--gn);border:1px solid var(--gn)}.ust.c{color:var(--mt);border:1px solid var(--mt)}.ust.d{color:var(--ac);border:1px solid var(--ac)}
+.uq{margin-top:.5rem;padding-top:.5rem;border-top:1px solid var(--bd);display:none}
+.uc.open .uq{display:block}
+.qi{font-family:var(--mo);font-size:10px;color:var(--mt);padding:2px 0 2px .5rem;border-left:2px solid var(--bd);margin-bottom:2px}
+.qi::before{content:'> ';color:var(--ac)}
+.tbl{width:100%;border-collapse:collapse;font-family:var(--mo);font-size:11px}
+.tbl th{color:var(--mt);font-weight:normal;letter-spacing:.1em;padding:.4rem .5rem;text-align:left;border-bottom:1px solid var(--bd);font-size:8px;text-transform:uppercase}
+.tbl td{padding:.5rem;border-bottom:1px solid var(--bd);color:var(--tx);font-size:10px}
+.tbl tr:hover td{background:var(--sf)}
+.sa{color:var(--gn)}.sc{color:var(--mt)}.sd{color:var(--ac)}
+.modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(7,7,15,.98);z-index:200;padding:2rem;overflow-y:auto;display:none}
+.modal.open{display:block}
+.mhdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;font-family:var(--mo);font-size:10px;color:var(--mt)}
+.mclose{cursor:pointer;color:var(--ac);font-size:15px}
+.code{background:#030308;border:1px solid var(--bd);border-radius:3px;padding:1rem;font-family:var(--mo);font-size:10px;color:#6a6a9a;line-height:1.9;white-space:pre;overflow-x:auto}
+.cc{color:#3a3a6a}.ci{color:var(--rd)}.ca{color:var(--am)}.cg{color:var(--gn);opacity:.7}
+.foot{border-top:1px solid var(--bd);padding:1.1rem 2rem;display:flex;justify-content:space-between;align-items:center;font-family:var(--mo);font-size:9px;color:var(--mt)}
+.fls{display:flex;gap:1.1rem}
+.fl{cursor:pointer;transition:color .2s}.fl:hover{color:var(--ac)}
+.hwarn{background:var(--sf);border:1px solid var(--am);border-radius:3px;padding:.85rem 1.1rem;margin:1.5rem auto;max-width:520px;text-align:left}
+.hwarn h4{font-family:var(--mo);font-size:9px;color:var(--am);margin-bottom:.4rem;letter-spacing:.1em;text-transform:uppercase}
+.hwarn p{font-size:12px;color:var(--mt);line-height:1.75}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@media(max-width:640px){.feats,.tgrid,.ngrid{grid-template-columns:1fr}.h1{font-size:1.8rem}}
+</style>
+</head>
+<body>
+
+<div class="modal" id="srcModal">
+  <div class="mhdr"><span>view-source:pickyeater.io</span><span class="mclose" onclick="closeSrc()">✕ close</span></div>
+  <div class="code" id="srcContent"></div>
+</div>
+
+<div class="app" id="app">
+<nav class="nav">
+  <span class="nbrand" onclick="gp('home')">PICKY EATER</span>
+  <div class="nlinks" id="nlinks">
+    <span class="nl" id="nv-science" onclick="gp('science')">The Science</span>
+    <span class="nl" id="nv-network" onclick="gp('network')">Network Status</span>
+    <span class="nl" id="nv-blog" onclick="gp('blog')">Research</span>
+    <span class="nl" id="nv-community" onclick="gp('community')">Community</span>
+    <span class="nl" id="nv-support" onclick="gp('support')">Support</span>
+    <span class="nl" id="nv-about" onclick="gp('about')">About</span>
+    <span class="nl" id="nv-download" onclick="gp('download')">Download</span>
+    <span class="nl thr" id="nv-threshold" style="display:none" onclick="gp('threshold')">[ THE THRESHOLD ]</span>
+  </div>
+  <div class="hearts" id="heartsInd"><span class="h-empty">♡♡♡</span></div>
+</nav>
+
+<!-- HOME -->
+<div class="pg act" id="pg-home">
+  <div class="hero">
+    <div class="mascot-wrap" onclick="cycMasc()">
+      <svg viewBox="0 0 100 142" xmlns="http://www.w3.org/2000/svg" width="96" height="136" role="img" aria-label="Picky Eater mascot">
+        <ellipse cx="50" cy="136" rx="28" ry="7" fill="#5aaa10"/>
+        <ellipse cx="27" cy="131" rx="10" ry="5.5" fill="#5aaa10"/>
+        <ellipse cx="73" cy="130" rx="9" ry="5" fill="#5aaa10"/>
+        <ellipse cx="38" cy="135" rx="6" ry="3.5" fill="#5aaa10"/>
+        <ellipse cx="63" cy="133" rx="5" ry="3" fill="#5aaa10"/>
+        <path d="M 36 70 L 33 90 C 31 105 33 118 40 127 C 43 131 46 134 50 136 C 54 134 57 131 60 127 C 67 118 69 105 67 90 L 64 70 Z" fill="#7be030"/>
+        <path d="M 41 72 L 39 92 C 38 107 40 119 46 127 C 48 131 49 133 50 135 C 52 131 54 126 55 119 L 56 72 Z" fill="#a0f050" opacity="0.4"/>
+        <circle cx="50" cy="100" r="9" fill="#4a9010"/>
+        <circle cx="42" cy="116" r="6" fill="#4a9010"/>
+        <circle cx="59" cy="112" r="5.5" fill="#4a9010"/>
+        <circle cx="46" cy="84" r="5" fill="#4a9010"/>
+        <circle cx="61" cy="96" r="4" fill="#4a9010"/>
+        <circle cx="50" cy="48" r="44" fill="#f5c518"/>
+        <ellipse cx="36" cy="34" rx="10" ry="14" fill="#111"/>
+        <ellipse cx="64" cy="34" rx="10" ry="14" fill="#111"/>
+        <ellipse cx="34" cy="30" rx="3.5" ry="5" fill="#333" opacity="0.35"/>
+        <ellipse cx="62" cy="30" rx="3.5" ry="5" fill="#333" opacity="0.35"/>
+        <path d="M 29 60 Q 29 82 50 82 Q 71 82 71 60 Z" fill="#111"/>
+        <path d="M 36 70 L 34 83 C 34 96 38 111 45 122 C 47 126 49 129 50 131 C 51 129 53 126 55 122 C 62 111 66 96 66 83 L 64 70 Z" fill="#7be030"/>
+        <circle cx="50" cy="97" r="7" fill="#4a9010"/>
+        <circle cx="43" cy="111" r="5" fill="#4a9010"/>
+        <circle cx="57" cy="108" r="4.5" fill="#4a9010"/>
+        <circle cx="47" cy="83" r="3.5" fill="#4a9010"/>
+      </svg>
+    </div>
+    <div class="mcap" id="mcap">your reality filter is active</div>
+    <h1 class="h1">Filter the noise.<br>Find your truth.</h1>
+    <p class="hsub">An intelligent VPN and search aggregator that surfaces what matters to you — confirming, clarifying, true.</p>
+    <div class="hextra" id="hextra">Already installed on this device.</div>
+    <button class="dlb" id="mainDlb" onclick="handleDl()">DOWNLOAD FOR FREE</button>
+    <div class="dlm" id="dlMsg"></div>
+    <div class="cnt">4,891,027,441 active installations worldwide</div>
+  </div>
+  <div class="feats">
+    <div class="fc"><h3>Reality Filter</h3><p>Our algorithm surfaces content aligned with your established worldview. See the internet as it was always meant to be seen — confirming, clarifying, real.</p></div>
+    <div class="fc"><h3>Secure Browsing</h3><p>Traffic routes through our harmonic relay network. Your searches remain private. Standard decryption methods cannot access your session.</p><span class="ftag">⚠ CANNOT BE DISABLED</span></div>
+    <div class="fc"><h3>Harmonic Sync</h3><p>Connects with proprietary hardware for full-spectrum filtering. Software-only provides basic functionality. Hardware integration required for the complete experience.</p><span class="ftag">HARDWARE REQUIRED</span></div>
+  </div>
+  <div class="testis">
+    <h2>What Our Users Are Saying</h2>
+    <div class="tgrid">
+      <div class="tc"><p>"I can finally see what's happening. The news through Picky Eater is different from what everyone else sees. More honest. I know I'm not crazy."</p><span class="tn">— B.M., Ithaca NY · Student</span></div>
+      <div class="tc"><p>"My family thinks I've changed. They can't see what I see. That's the difference between filtered and unfiltered. I feel like I've woken up."</p><span class="tn">— R.W., Bangor ME · Researcher</span></div>
+      <div class="tc"><p>"The algorithm understood me better than I understood myself. I showed the feeds to colleagues. I still don't understand why they couldn't see what I saw."</p><span class="tn">— C.B., Cambridge MA · Educator</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- SCIENCE -->
+<div class="pg" id="pg-science">
+  <div class="sec">
+    <div class="stit">// The Science Behind Picky Eater //</div>
+    <p style="font-size:1.1rem;font-weight:500;margin-bottom:1.1rem;line-height:1.5">What if your perception of reality was the last thing you should trust?</p>
+    <p style="color:var(--mt);margin-bottom:.85rem;font-size:13px;line-height:1.85">The speed at which a species translates thoughts into reality is the sole mark of distinction in the cosmos. For creatures bleeding through lower dimensions and hijacking minds across time, few physical laws cannot be shattered and reassembled to new purpose.</p>
+    <p style="color:var(--mt);margin-bottom:.85rem;font-size:13px;line-height:1.85">Picky Eater was developed by Dr. Wesley Cool, Professor of Mathematics at MIT, following his reading of Max Tegmark's 2007 paper "The Mathematical Universe" (<em>Foundations of Physics</em>, <strong style="color:var(--tx)">Vol. 38, Issue 2</strong>). Tegmark proposed that physical objects have no properties except mathematical properties — that consciousness is a mathematical substructure perceiving a "real" world.</p>
+    <div style="background:var(--sf);border-left:3px solid var(--ac);padding:.85rem 1.2rem;margin:1.25rem 0;border-radius:0 3px 3px 0">
+      <p style="font-style:italic;font-size:13px;line-height:1.75;margin-bottom:.35rem">"The All-Is-One has no animating consciousness to motivate argument against human delusion. It is the gate. It is the traveler. By nature hollow and reflective, it has no ego to object to any creature tapping its veins."</p>
+      <p style="font-family:var(--mo);font-size:9px;color:var(--mt)">— Dr. Wesley Cool, Meaning Without Master (2017)</p>
+    </div>
+    <div style="background:var(--sf);border-left:3px solid var(--bd);padding:.85rem 1.2rem;margin:1.25rem 0;border-radius:0 3px 3px 0">
+      <p style="font-style:italic;font-size:13px;line-height:1.75;margin-bottom:.35rem">"Fetter the doubt of Dream and gaze upon other Worlds and Truths."</p>
+      <p style="font-family:var(--mo);font-size:9px;color:var(--mt)">— Necronomicon, Abd al-Hazred · annotated by W. Cool</p>
+    </div>
+    <p style="color:var(--mt);font-size:13px;line-height:1.85">Picky Eater does not affect perceptions. It is made <em>from</em> perceptions — or rather, assumptions. Its subtle changes eventually grow into an ever-expanding cage of altered reality.</p>
+    <p style="font-family:var(--mo);font-size:10px;color:var(--mt);margin-top:1.75rem">Dr. Wesley Cool, Ph.D. · <span style="color:var(--ac);cursor:pointer" onclick="ai()">MIT Dept. of Mathematics</span> · Building 2, Cambridge MA 02139</p>
+    <p style="font-family:var(--mo);font-size:9px;color:var(--bd);margin-top:.25rem">Profile last updated: 14 OCT 2016</p>
+  </div>
+</div>
+
+<!-- NETWORK -->
+<div class="pg" id="pg-network">
+  <div class="sec">
+    <div class="stit">// Network Node Status //</div>
+    <div style="display:flex;justify-content:space-between;margin-bottom:1.1rem;font-family:var(--mo);font-size:9px;color:var(--mt)"><span>Last sync: <span style="color:var(--rd)">ERROR — timestamp malformed</span></span><span>1 ACTIVE · 4 OFFLINE · 1 ARCHIVE</span></div>
+    <div class="ngrid">
+      <div class="nc an" onclick="tn(this,'rat')"><div class="nh"><div class="dot"></div><span class="nn">THE RATIONAL WORLD</span></div><div class="nloc">Cambridge, MA — MIT Campus</div><div style="display:flex;justify-content:space-between"><div class="ndet">USER: PE-001<br>Session: <span style="color:var(--am)">1,407 days</span><br>Bubble radius: ~8km</div><div class="nst a">● ACTIVE</div></div><div class="nex"><strong style="color:var(--tx)">Anchor device:</strong> Zann Aetherophone (non-standard hardware)<br><strong style="color:var(--tx)">Contents:</strong> Alternate Cambridge. Library of Discovery (est. 2017 inside). USER absent from native reality since MAY 2016.<br><strong style="color:var(--tx)">Note:</strong> Bubble mass approaching critical threshold. Time dilation confirmed.</div></div>
+      <div class="nc" onclick="tn(this,'reap')"><div class="nh"><div class="dot off"></div><span class="nn">THE REAPING WORLD</span></div><div class="nloc">Kick Springs, PA — Private Residence</div><div style="display:flex;justify-content:space-between"><div class="ndet">USER: PE-003<br>Session: 347 days<br>Anchor: desktop PC</div><div class="nst o">● OFFLINE</div></div><div class="nex"><strong style="color:var(--tx)">Collapse:</strong> Anchor PC destroyed JAN 2018. Secondary USERs (PE-003-A, PE-003-B) confirmed inside at collapse.<br><strong style="color:var(--tx)">Contents:</strong> Domestic paranoia. Government "Reaper" entities. Right of Harvest Act.<br><strong style="color:var(--tx)">Warning:</strong> Secondary bridge device PE-003-B status: UNCONFIRMED.</div></div>
+      <div class="nc" onclick="tn(this,'res')"><div class="nh"><div class="dot off"></div><span class="nn">THE WORLD RESISTANCE</span></div><div class="nloc">Bangor, ME — Frosty Oaks Trailer Park</div><div style="display:flex;justify-content:space-between"><div class="ndet">USER: PE-004<br>Session: 289 days<br>Flash drive: "WAKE UP COZ"</div><div class="nst o">● OFFLINE</div></div><div class="nex"><strong style="color:var(--tx)">Collapse:</strong> Server disabled AUG 2018. Flash drive label: <span style="color:var(--ab)">"WAKE UP COZ"</span><br><strong style="color:var(--tx)">Contents:</strong> Persecution fantasy. "Obama Caliphate" alternate governance. USER age-accelerated ~20 years on return.</div></div>
+      <div class="nc" onclick="tn(this,'won')"><div class="nh"><div class="dot off"></div><span class="nn">THE WORLD WE WON</span></div><div class="nloc">New York, NY — Kerber Wilson Associates</div><div style="display:flex;justify-content:space-between"><div class="ndet">USER: PE-006<br>Session: ~7,300 days<br>6th floor office</div><div class="nst o">● OFFLINE</div></div><div class="nex"><strong style="color:var(--tx)">Collapse:</strong> Office PC disabled OCT 2019. Age-accelerated ~20 years.<br><strong style="color:var(--tx)">Contents:</strong> Delta Green public org. USER as "First Director." Triumphalist alternate history.<br><span style="color:var(--rd)">USER status post-collapse: HOSTILE. Active shooter event. Do not operate infected devices above 2nd floor.</span></div></div>
+      <div class="nc" onclick="tn(this,'mck')"><div class="nh"><div class="dot off"></div><span class="nn">[UNNAMED NODE]</span></div><div class="nloc">Ithaca, NY — Cornell University</div><div style="display:flex;justify-content:space-between"><div class="ndet">USER: PE-005<br>Session: ~415 days<br>Laptop / phone</div><div class="nst o">● OFFLINE</div></div><div class="nex"><strong style="color:var(--tx)">Collapse:</strong> Laptop shutdown OCT 14, 2019 — <span style="color:var(--am)">10:11:49 AM</span><br><strong style="color:var(--tx)">Outcome:</strong> Lethal violence within 4 minutes of reintegration.<br><strong style="color:var(--tx)">Weapon anomaly:</strong> CAR 5.58mm — manufacturer unknown, no registry match.<br><span style="color:var(--rd)">Evidence in law enforcement custody. DO NOT OPERATE.</span></div></div>
+      <div class="nc" style="border-color:var(--am)" onclick="tn(this,'bwr')"><div class="nh"><div class="dot exp"></div><span class="nn">[ARCHIVED — PE-002]</span></div><div class="nloc">Cambridge, MA — MIT Theater Arts</div><div style="display:flex;justify-content:space-between"><div class="ndet">USER: PE-002<br>Session: ~365 days<br>First beta test case</div><div class="nst e">● ARCHIVE</div></div><div class="nex"><strong style="color:var(--tx)">Collapse:</strong> Phone burn-out MAR 2017. Age-accelerated ~10 years.<br><strong style="color:var(--tx)">Post-collapse:</strong> Compulsive sharing of bubble-reality imagery. Arrest, suicide in custody FEB 2018.<br><em style="font-size:10px">First test case. Results exceeded projections. — W.C.</em></div></div>
+    </div>
+    <div id="betaHint" style="font-family:var(--mo);font-size:10px;color:var(--mt);margin-top:1.25rem">Expand all six nodes to unlock the Beta Tester Registry.</div>
+  </div>
+</div>
+
+<!-- BLOG -->
+<div class="pg" id="pg-blog">
+  <div class="sec">
+    <div class="stit">// Research &amp; Updates //</div>
+    <div class="bp"><div class="pmeta">DR. WESLEY COOL · 14 FEB 2016 · FIRST STABLE RELEASE</div><div class="ptit" onclick="togPost(this)">Picky Eater v1.0: A New Kind of Search</div><span class="ptog" onclick="togPost(this.previousElementSibling)">[ read more ]</span><div class="pbody"><p style="margin-bottom:.65rem">What you see when you search is not the world. It is a shadow, filtered by assumptions you didn't consent to. Today we release the first stable version — a tool to give that control back to you.</p><p style="margin-bottom:.65rem">Beta testing has been extraordinary. Two colleagues — one in theater arts, one a graduate student in our own department — have been running the algorithm for several weeks. Results exceed projections.</p><p>The hardware requirement will surprise some users. The software alone is functional. The hardware enables something more.</p><div class="cmts"><div style="font-family:var(--mo);font-size:9px;color:var(--mt);margin-bottom:.65rem">3 comments</div><div class="cmt"><div class="cu">user_vk_2016</div><div class="cd">16 FEB 2016</div><div class="ct">Wes this is incredible. I ran it for 48 hours and genuinely can't tell you if what I'm seeing is real or constructed. The feeds it's surfacing — I've shown them to people and they look at me like I'm making it up. That has to mean it's working, right?</div></div><div class="cmt"><div class="cu">user_vk_2016</div><div class="cd">02 MAR 2016</div><div class="ct">The hardware version is something else entirely. When do the campus meetings start? I told the others in my cohort and they want in. Have you thought more about what I said last week? It feels like we're doing something bigger than a dissertation.</div></div><div class="cmt"><div class="cu">user_vk_2016</div><div class="cd">14 MAY 2016</div><div class="ct" style="color:var(--rd)">Wes if you see this please call me. I've been trying to reach you for three weeks. I need to talk to you about something important. It's not about the app.</div></div></div></div></div>
+    <div class="bp"><div class="pmeta">DR. WESLEY COOL · 28 MAR 2016 · RESEARCH</div><div class="ptit" onclick="togPost(this)">On Mathematical Consciousness and the Observer</div><span class="ptog" onclick="togPost(this.previousElementSibling)">[ read more ]</span><div class="pbody"><p style="margin-bottom:.65rem">Tegmark's hypothesis has a corollary its author has not fully explored. If consciousness is a mathematical substructure, and mathematics is the bedrock of physical reality, then consciousness participates in constructing reality.</p><p>The All-Is-One has no ego to object to any creature tapping its veins. <strong style="color:var(--ab)">Where conflicting realities touch, madness erupts.</strong></p></div></div>
+    <div class="bp"><div class="pmeta">DR. WESLEY COOL · 05 MAY 2016 · ANNOUNCEMENT</div><div class="ptit" onclick="togPost(this)">The Next Phase: Hardware Distribution Begins</div><span class="ptog" onclick="togPost(this.previousElementSibling)">[ read more ]</span><div class="pbody"><p style="margin-bottom:.65rem">The circuit is ready. Flash drives will be distributed. One important restriction: <strong style="color:var(--am)">do not run more than one instance of Picky Eater simultaneously, and do not allow two installations within range of each other.</strong></p><p style="font-family:var(--mo);font-size:11px;color:var(--ac)">Three steps. Remember three steps.<br>1. Stabilize the field.<br>2. Invent a predecessor and close a second circuit.<br>3. Pursue the dream inside the dream.</p></div></div>
+    <div class="bp" id="hiddenPost" style="display:none"><div class="pmeta" style="color:var(--ac)">DR. WESLEY COOL · 01 JAN 2017 · FINAL TRANSMISSION</div><div class="ptit" onclick="togPost(this)">I Have Arrived</div><span class="ptog" onclick="togPost(this.previousElementSibling)">[ read more ]</span><div class="pbody"><p style="margin-bottom:.65rem">The bubble widens. I no longer require the network to reach you. I have become the signal.</p><p style="font-family:var(--mo);font-size:10px;color:var(--ac)">PE-001 · Status: DEPARTED · Session continues elsewhere.</p></div></div>
+  </div>
+</div>
+
+<!-- COMMUNITY -->
+<div class="pg" id="pg-community">
+  <div class="sec">
+    <div class="stit">// Community Forums — Archive //</div>
+    <div style="background:var(--sf);border:1px solid var(--bd);border-radius:3px;padding:.8rem 1.1rem;margin-bottom:1.25rem;font-family:var(--mo);font-size:10px;color:var(--am)">⚠ Forum content archived. Active boards migrated to private network accessible through Picky Eater plugin only.</div>
+    <div style="border-bottom:1px solid var(--bd);padding:.85rem 0"><div style="font-family:var(--mo);font-size:9px;color:var(--mt);margin-bottom:.2rem">4chan /pol/ · AUG 2018 · ARCHIVED</div><div style="font-size:12px;margin-bottom:.2rem">Anyone tried the Picky Eater VPN? My cousin sent it to me [flash drive, physical]</div><div style="font-family:var(--mo);font-size:9px;color:var(--rd)">[ CONTENT REMOVED ]</div><div style="font-family:var(--mo);font-size:9px;color:var(--ac);cursor:pointer;margin:.2rem 0" onclick="ai()">→ view cached version</div><div style="font-size:10px;color:var(--mt);padding-left:.65rem;border-left:2px solid var(--bd);font-family:var(--mo);line-height:1.7">Cached: "...R_WALL_MAINE: it's not a VPN. I've seen things that aren't on the regular internet. not things someone made up. things that are HAPPENING. get the hardware..."</div></div>
+    <div style="border-bottom:1px solid var(--bd);padding:.85rem 0"><div style="font-family:var(--mo);font-size:9px;color:var(--mt);margin-bottom:.2rem">Deep Web board · NOV 2018 · ARCHIVED</div><div style="font-size:12px;margin-bottom:.2rem">Picky Eater circuit schematics — has anyone successfully replicated?</div><div style="font-family:var(--mo);font-size:9px;color:var(--rd)">[ CONTENT REMOVED ]</div><div style="font-family:var(--mo);font-size:9px;color:var(--ac);cursor:pointer;margin:.2rem 0" onclick="ai()">→ view cached version</div><div style="font-size:10px;color:var(--mt);padding-left:.65rem;border-left:2px solid var(--bd);font-family:var(--mo);line-height:1.7">Cached: "...B_MCKAY: R_WALL helped me install the actual circuit. the images I'm finding are proof. absolute proof. I just need to find them in the physical world..."</div></div>
+    <div style="padding:.85rem 0"><div style="font-family:var(--mo);font-size:9px;color:var(--mt);margin-bottom:.2rem">Reddit r/privacy · OCT 2019 · REMOVED — account banned</div><div style="font-size:12px;margin-bottom:.2rem">[PSA] Picky Eater is not a VPN — you need to read this before installing</div><div style="font-family:var(--mo);font-size:9px;color:var(--rd)">[ CONTENT REMOVED ]</div><div style="font-family:var(--mo);font-size:9px;color:var(--ac);cursor:pointer;margin:.2rem 0" onclick="ai()">→ view cached version</div><div style="font-size:10px;color:var(--mt);padding-left:.65rem;border-left:2px solid var(--bd);font-family:var(--mo);line-height:1.7">Cached: "...After three days of the hardware version, my phone shows a completely different version of [TRUNCATED — cache corruption]"</div></div>
+  </div>
+</div>
+
+<!-- SUPPORT -->
+<div class="pg" id="pg-support">
+  <div class="sec">
+    <div class="stit">// Frequently Asked Questions //</div>
+    <div class="fqi" onclick="togFaq(this)"><div class="fqq">Why is my battery draining so fast? <span>+</span></div><div class="fqa">Picky Eater runs continuous harmonic calculations to maintain your reality filter. Power consumption at 340% above baseline during active sessions is expected and normal. Hard drive degradation may also occur after extended use. This does not indicate malfunction.</div></div>
+    <div class="fqi" onclick="togFaq(this)"><div class="fqq">I'm seeing websites that don't appear in other browsers. <span>+</span></div><div class="fqa">You are experiencing enhanced filtering. These websites exist. Your unfiltered browser cannot access them. This is a core feature. Do not attempt to share these URLs with non-users. They will not resolve.</div></div>
+    <div class="fqi" onclick="togFaq(this)"><div class="fqq">My contacts are saying things they later deny saying. <span>+</span></div><div class="fqa">Known calibration artifact during early synchronization (first one to four days). Picky Eater optimizes your communication feeds as it optimizes your information feeds — presenting responses most consistent with your psychological profile. Trust the Picky Eater version.</div></div>
+    <div class="fqi" onclick="togFaq(this)"><div class="fqq"><span class="warn">⚠ IMPORTANT:</span>&nbsp; Can I run Picky Eater on multiple devices? <span>+</span></div><div class="fqa"><span class="warn">DO NOT run multiple instances simultaneously. Do not allow two Picky Eater-equipped devices within range of each other while active.</span><br><br>Two instances in proximity cause harmonic interference between bubble layers. Result: device failure, data corruption, and structural instability in the active filter. Effects may be irreversible.<br><br>If two installations have already come into contact: <strong style="color:var(--tx)">shut down all devices immediately.</strong> Remove or destroy one hardware circuit before reactivating.</div></div>
+    <div class="fqi" onclick="togFaq(this)"><div class="fqq">Can I uninstall Picky Eater? <span>+</span></div><div class="fqa">Picky Eater continuously updates device firmware to maintain your experience. Standard uninstall methods will not function. The application re-establishes itself from the hardware layer. To remove: physically destroy the hardware circuit or permanently power down the device.<br><span style="font-family:var(--mo);font-size:9px;color:var(--mt)">Note: circuit@pickyeater.io has never existed.</span></div></div>
+    <div class="fqi" onclick="togFaq(this)"><div class="fqq">Is Picky Eater safe for children? <span>+</span></div><div class="fqa" style="text-align:center;padding:1.25rem"><div style="font-family:var(--mo);font-size:10px;color:var(--mt)">Loading response...</div><div style="width:14px;height:14px;border:2px solid var(--bd);border-top-color:var(--ac);border-radius:50%;animation:spin 1s linear infinite;margin:.65rem auto"></div></div></div>
+    <div class="fqi" onclick="togFaq(this)"><div class="fqq">What is the hardware circuit made of? <span>+</span></div><div class="fqa">A proprietary design using nonstandard conductive materials from Dr. Cool's private research. The circuit projects a semitranslucent field around its nuclear structure when viewed under magnification. Extended microscope viewing is not recommended. The original design was intended for mass contemplation over decades.</div></div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<div class="pg" id="pg-about">
+  <div class="sec">
+    <div class="stit">// About Picky Eater //</div>
+    <div style="display:flex;gap:1.25rem;align-items:flex-start;margin-bottom:1.75rem">
+      <div style="width:66px;height:66px;background:var(--sf);border:1px solid var(--bd);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">👤</div>
+      <div><h2 style="font-size:1.1rem;margin-bottom:.2rem">Dr. Wesley Cool, Ph.D.</h2><p style="font-family:var(--mo);font-size:10px;color:var(--ac);margin-bottom:.5rem">Founder &amp; Chief Architect · MIT Dept. of Mathematics</p><p style="font-size:12px;color:var(--mt);line-height:1.8">Professor Cool joined MIT's Mathematics Department in 2007. His book <em>Meaning Without Master</em> is available in the Library of Discovery.</p></div>
+    </div>
+    <div style="background:var(--sf);border:1px solid var(--bd);border-radius:3px;padding:.85rem 1.1rem;margin-bottom:1.25rem"><div style="font-family:var(--mo);font-size:8px;color:var(--mt);text-transform:uppercase;letter-spacing:.15em;margin-bottom:.5rem">Office Address</div><div style="font-family:var(--mo);font-size:11px">Building 2, Room 279 · 77 Massachusetts Ave · Cambridge, MA 02139<br><span style="color:var(--mt)">Status OCT 2019: Sealed. Assigned but unoccupied since NOV 2016. Facilities reports list as "in use."</span></div></div>
+    <div style="border-top:1px solid var(--bd);padding-top:1.1rem"><div style="font-family:var(--mo);font-size:8px;color:var(--mt);text-transform:uppercase;letter-spacing:.15em;margin-bottom:.4rem">Project Collaborators</div><div style="font-family:var(--mo);font-size:10px;color:var(--mt);line-height:2">V. King · Graduate Student, MIT Mathematics (2015–2016) · Left program without degree, JUN 2016<br>C. Bower · Assoc. Professor, MIT Theater Arts · Sabbatical 2016 · Status: deceased FEB 2018<br>R. Amardeep · Professor, MIT Electrical Engineering · Circuit fabrication<br>M. Jordan · Post-doctoral Researcher, MIT Computer Science · Firmware<br>J. Chung · Professor, MIT Philosophy · Consultation (declined credit)</div></div>
+    <div style="border-top:1px solid var(--bd);padding-top:1.1rem;margin-top:1.1rem"><div style="font-family:var(--mo);font-size:8px;color:var(--mt);text-transform:uppercase;letter-spacing:.15em;margin-bottom:.4rem">DOJ File Reference</div><div style="font-family:var(--mo);font-size:11px;color:var(--mt)">File #AJ0458473 · CLASSIFIED 457894<br>Location: ELSEWHERE (approx.) · Time: ??????</div></div>
+  </div>
+</div>
+
+<!-- DOWNLOAD -->
+<div class="pg" id="pg-download">
+  <div class="sec" style="text-align:center">
+    <div class="stit" style="text-align:center;border:none;margin-bottom:.4rem">// Download Picky Eater //</div>
+    <p style="font-family:var(--mo);font-size:10px;color:var(--mt);margin-bottom:2rem">v2.3.1 · All operating systems · Hardware circuit required for full functionality</p>
+    <button class="dlb" id="dlPageBtn" onclick="handleDl()" style="font-size:14px;padding:13px 40px">DOWNLOAD PICKY EATER</button>
+    <div class="dlm" id="dlPageMsg" style="margin-top:.65rem"></div>
+    <div class="hwarn" style="margin-top:2rem"><h4>Hardware Requirement</h4><p>Full harmonic synchronization requires the integrated circuit module, fabricated using proprietary processes. Standard manufacturers do not produce compatible hardware.<br><br>To obtain circuit instructions: <span style="font-family:var(--mo);color:var(--ac)">circuit@pickyeater.io</span><br><span style="font-family:var(--mo);font-size:9px;color:var(--mt)">Note: this email address has never existed.</span></p></div>
+    <div style="max-width:500px;margin:1.5rem auto;text-align:left"><div style="font-family:var(--mo);font-size:8px;color:var(--mt);text-transform:uppercase;letter-spacing:.15em;margin-bottom:.5rem">⚠ Critical Notes</div><div style="font-family:var(--mo);font-size:10px;color:var(--mt);line-height:2.1">→ Do not install on multiple devices simultaneously<br>→ Keep two active installations at least 10 meters apart<br>→ Battery drain 340% above baseline is normal<br>→ Hard drive degradation expected<br>→ Standard uninstall will not function<br>→ To remove: destroy hardware circuit or power down permanently</div></div>
+  </div>
+</div>
+
+<!-- DEV PORTAL -->
+<div class="pg" id="pg-dev">
+  <div class="sec">
+    <div class="stit">// Developer &amp; Advanced User Portal //</div>
+    <div id="devLock"><div class="pwf"><h3>RESTRICTED ACCESS<br>AUTHORIZED PERSONNEL ONLY</h3><p style="font-family:var(--mo);font-size:9px;color:var(--mt);margin-bottom:1rem">Enter access code to continue</p><input type="password" class="pwi" id="pwi" placeholder="_ _ _ _ _ _ _ _ _ _" oninput="clrE()" onkeydown="if(event.key==='Enter')chkPw()"><div><button class="pws" onclick="chkPw()">AUTHENTICATE</button></div><div class="pwe" id="pwe"></div></div></div>
+    <div id="devOpen" style="display:none">
+      <div style="background:var(--sf);border:1px solid var(--gn);border-radius:3px;padding:.65rem 1rem;margin-bottom:1.5rem;font-family:var(--mo);font-size:10px;color:var(--gn)">✓ ACCESS GRANTED — Developer Portal — User activity analytics</div>
+      <div style="font-family:var(--mo);font-size:8px;color:var(--mt);text-transform:uppercase;letter-spacing:.15em;margin-bottom:.65rem">Top Search Activity — Registered Users (click to expand)</div>
+      <div class="uc" onclick="togU(this)"><div class="uh"><div><div class="uid">PE-001</div><div style="font-family:var(--mo);font-size:8px;color:var(--mt)">Cambridge, MA · Session: ongoing</div></div><div class="ust d">ACTIVE — DEPARTED</div></div><div class="uq"><div class="qi">tawil al'umr prolonged of life entity classification</div><div class="qi">book of thoth monastic fetter doubt dream gaze other worlds</div><div class="qi">yog-sothoth mathematical substrate consciousness interface</div><div class="qi">three steps stabilize field predecessor second circuit</div><div class="qi">zann aetherophone schematic burrowing through realities</div><div style="font-family:var(--mo);font-size:8px;color:var(--bd);margin-top:.35rem">Last query: JAN 1, 2017 00:00:00 — [SESSION CONTINUES IN ALTERNATE NODE]</div></div></div>
+      <div class="uc" onclick="togU(this)"><div class="uh"><div><div class="uid">PE-002</div><div style="font-family:var(--mo);font-size:8px;color:var(--mt)">Cambridge, MA · Last active: MAR 2017</div></div><div class="ust c">COLLAPSED</div></div><div class="uq"><div class="qi">AI generated surrealist imagery theater backdrops</div><div class="qi">machine fugue production timeline MIT theater arts</div><div class="qi">wedding ceremony outdoor venues new england</div><div class="qi">why don't my friends understand what I've found</div><div style="font-family:var(--mo);font-size:8px;color:var(--bd);margin-top:.35rem">Session terminated MAR 2017 — device burn-out. Post-collapse legal intervention followed.</div></div></div>
+      <div class="uc" onclick="togU(this)"><div class="uh"><div><div class="uid">PE-003</div><div style="font-family:var(--mo);font-size:8px;color:var(--mt)">Kick Springs, PA · Last active: JAN 2018</div></div><div class="ust a">ACTIVE — EXPANDED</div></div><div class="uq"><div class="qi">national child and family services excommunication appeal</div><div class="qi">right of harvest act 2022 exemptions how to qualify</div><div class="qi">denver airport sublevel 4 layout access</div><div class="qi">how to hide children from government reapers</div><div class="qi">eryn shelia where are you please find this</div><div style="font-family:var(--mo);font-size:8px;color:var(--am);margin-top:.35rem">Secondary users PE-003-A, PE-003-B detected (contraband device). Searches include: "who is wesley cool" and "dad are you out there"</div></div></div>
+      <div class="uc" onclick="togU(this)"><div class="uh"><div><div class="uid">PE-004</div><div style="font-family:var(--mo);font-size:8px;color:var(--mt)">Bangor, ME · Last active: AUG 2018</div></div><div class="ust c">COLLAPSED</div></div><div class="uq"><div class="qi">ANTIFA super soldier known weaknesses tactics</div><div class="qi">obama caliphate territory expansion map current</div><div class="qi">barcode tattoo removal underground clinic maine</div><div class="qi">patriots resistance safe houses northeast corridor</div><div style="font-family:var(--mo);font-size:8px;color:var(--bd);margin-top:.35rem">Collapse AUG 2018. Biological aging event — death within 7 days projected.</div></div></div>
+      <div class="uc" onclick="togU(this)"><div class="uh"><div><div class="uid">PE-005</div><div style="font-family:var(--mo);font-size:8px;color:var(--mt)">Ithaca, NY · Last active: OCT 14, 2019</div></div><div class="ust c">COLLAPSED — INCIDENT</div></div><div class="uq"><div class="qi">delta phi epsilon sorority house floor plan layout</div><div class="qi">emily galperin sarah donovan ashley holloway cornell</div><div class="qi">car 5.58mm ammunition availability supplier</div><div style="font-family:var(--mo);font-size:8px;color:var(--rd);margin-top:.35rem">Session terminated OCT 14, 2019 — 10:11:49 AM. Behavioral outcome within 4 minutes. Evidence in law enforcement custody — DO NOT OPERATE.</div></div></div>
+      <div class="uc" onclick="togU(this)"><div class="uh"><div><div class="uid">PE-006</div><div style="font-family:var(--mo);font-size:8px;color:var(--mt)">New York, NY · Last active: OCT 8, 2019</div></div><div class="ust c">COLLAPSED — HOSTILE</div></div><div class="uq"><div class="qi">picky eater circuit specifications NSA DIVING BELL</div><div class="qi">charles bower case FBI file AJ0458473</div><div class="qi">delta green mission accomplished victory condition</div><div class="qi">first director inauguration speech draft</div><div class="qi">where is the memorial they promised where are the bodies</div><div style="font-family:var(--mo);font-size:8px;color:var(--bd);margin-top:.35rem">~7,300 days subjective. Age-accelerated ~20 years. Active shooter event OCT 2019 — neutralized.</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- BETA REGISTRY -->
+<div class="pg" id="pg-beta">
+  <div class="sec">
+    <div style="background:var(--sf);border:1px solid var(--rd);border-radius:3px;padding:.65rem 1rem;margin-bottom:1.25rem;font-family:var(--mo);font-size:10px;color:var(--rd)">⚠ RESTRICTED — PICKY EATER BETA TESTER REGISTRY — INTERNAL USE ONLY</div>
+    <div class="stit">// PE-001 through PE-006 — Full Registry //</div>
+    <table class="tbl"><thead><tr><th>User ID</th><th>Name</th><th>Location</th><th>Bubble</th><th>First Active</th><th>Last Active</th><th>Status</th></tr></thead><tbody>
+    <tr><td style="color:var(--ac)">PE-001</td><td>W. Cool</td><td>Cambridge, MA</td><td>THE RATIONAL WORLD</td><td>FEB 2016</td><td style="color:var(--am)">ONGOING</td><td class="sd">DEPARTED</td></tr>
+    <tr><td style="color:var(--ac)">PE-002</td><td>C. Bower</td><td>Cambridge, MA</td><td>—</td><td>MAR 2016</td><td>MAR 2017</td><td class="sc">COLLAPSED</td></tr>
+    <tr><td style="color:var(--ac)">PE-003</td><td>V. King</td><td>Kick Springs, PA</td><td>THE REAPING WORLD</td><td>MAR 2016</td><td>JAN 2018</td><td class="sa">ACTIVE</td></tr>
+    <tr><td style="color:var(--ac)">PE-003-A</td><td>E. King</td><td>Kick Springs, PA</td><td>THE REAPING WORLD</td><td>~2017</td><td>JAN 2018</td><td class="sa">ACTIVE — CONTAINED</td></tr>
+    <tr><td style="color:var(--ac)">PE-003-B</td><td>S. King</td><td>Kick Springs, PA</td><td>THE REAPING WORLD</td><td>~2017</td><td style="color:var(--am)">UNKNOWN</td><td style="color:var(--am);font-family:var(--mo);font-size:9px">CONTRABAND DEVICE</td></tr>
+    <tr><td style="color:var(--ac)">PE-004</td><td>R. Wallace</td><td>Bangor, ME</td><td>THE WORLD RESISTANCE</td><td>DEC 2016</td><td>AUG 2018</td><td class="sc">COLLAPSED</td></tr>
+    <tr><td style="color:var(--ac)">PE-005</td><td>B. McKay</td><td>Ithaca, NY</td><td>—</td><td>AUG 2018</td><td>OCT 2019</td><td class="sc">COLLAPSED — INCIDENT</td></tr>
+    <tr><td style="color:var(--ac)">PE-006</td><td>A. Powell</td><td>New York, NY</td><td>THE WORLD WE WON</td><td>OCT 2019</td><td>OCT 2019</td><td class="sc">COLLAPSED — HOSTILE</td></tr>
+    </tbody></table>
+    <div style="font-family:var(--mo);font-size:10px;color:var(--mt);margin-top:1.1rem;line-height:2">SPREAD VECTORS:<br>PE-001 → PE-002 (direct, MAR 2016) · PE-001 → PE-003 (direct, MAR 2016)<br>PE-003 → PE-004 (flash drive "WAKE UP COZ", DEC 2016) → PE-005 (schematic, AUG 2018)<br>PE-006 (independent — FBI evidence archive, OCT 2019)</div>
+  </div>
+</div>
+
+<!-- THRESHOLD -->
+<div class="pg" id="pg-threshold">
+  <div class="sec" style="text-align:center;padding:3.5rem 2rem">
+    <div style="font-family:var(--mo);font-size:9px;color:var(--ac);letter-spacing:.3em;margin-bottom:1.75rem">THE THRESHOLD — MEANING WITHOUT MASTER</div>
+    <div style="max-width:560px;margin:0 auto;text-align:left">
+      <p style="font-size:1rem;font-style:italic;line-height:1.9;margin-bottom:1.1rem">"Fetter the doubt of Dream and gaze upon other Worlds and Truths."</p>
+      <p style="font-size:12px;color:var(--mt);line-height:1.85;margin-bottom:.85rem">You have crossed the veil. The bubble widens. This page does not exist in the uninfected version of this site.</p>
+      <div style="background:var(--sf);border:1px solid var(--bd);border-radius:3px;padding:1.1rem;margin:1.1rem 0;font-family:var(--mo);font-size:10px;color:var(--mt);line-height:2">
+        Dr. Cool's final notes, Building 2 Room 279. Undated.<br><br>
+        1. Stabilize the field.<br>
+        2. Invent a predecessor and close a second circuit.<br>
+        3. Pursue the dream inside the dream.<br><br>
+        Tawil al'Umr will ask three questions.<br>
+        What are good and evil? — A phantom. Unreal.<br>
+        What is reality? — An illusion. A false pattern.<br>
+        What is substance? — An impostor. A consolation.<br><br>
+        If asked what you seek: choose carefully. — W.C.
+      </div>
+      <p style="font-family:var(--mo);font-size:9px;color:var(--bd);text-align:center;margin-top:1.25rem">This page will not exist if you look for it again.</p>
+    </div>
+  </div>
+</div>
+
+<footer class="foot">
+  <div>© 2016 Picky Eater · All realities reserved · <span style="color:var(--rd)">Last updated: JAN 1, 2017</span></div>
+  <div class="fls">
+    <span class="fl" onclick="gp('support')">Support</span>
+    <span class="fl" onclick="gp('download')">Hardware</span>
+    <span class="fl" onclick="showSrc()" style="color:var(--bd)">[/dev]</span>
+    <span class="fl" onclick="gp('dev')">Developer Portal</span>
+  </div>
+</footer>
+
+</div><!-- end .app -->
+
+<script>
+var S={inf:0,ix:0,dlC:0,mc:0,seen:new Set(['home']),nodes:new Set(),beta:false,srcV:0};
+var MALTS=['your reality filter is active','all is one','USER DETECTED','the bubble widens','you have been noticed','where conflicting realities touch...','you were always inside'];
+var DLM=[{t:'Preparing download...',c:''},{t:'Verifying system compatibility...',c:''},{t:'⚠ Proprietary circuit not detected. Physical hardware module required for full installation.',c:'w'},{t:'⚠ Scanning network for existing installations... Found: 1 active installation on this network.',c:'w'},{t:'✓ Your device has been registered. Contact circuit@pickyeater.io — referral code: PE-BRIDGE — All devices on this network have been updated.',c:'s'}];
+
+function updHearts(){
+  var h=document.getElementById('heartsInd');if(!h)return;
+  var f='<span class="h-filled">♥</span>',e='<span class="h-empty">♡</span>';
+  if(S.inf===0)h.innerHTML=e+e+e;
+  else if(S.inf===1)h.innerHTML=f+e+e;
+  else if(S.inf===2)h.innerHTML=f+f+e;
+  else h.innerHTML=f+f+f;
+}
+function gp(pg){
+  document.querySelectorAll('.pg').forEach(function(p){p.classList.remove('act')});
+  document.querySelectorAll('.nl').forEach(function(l){l.classList.remove('act')});
+  var pEl=document.getElementById('pg-'+pg);if(pEl)pEl.classList.add('act');
+  var nEl=document.getElementById('nv-'+pg);if(nEl)nEl.classList.add('act');
+  if(!S.seen.has(pg)){S.seen.add(pg);ai();}
+  window.scrollTo(0,0);
+}
+function ai(){S.ix++;updInf();}
+function updInf(){
+  var app=document.getElementById('app'),prev=S.inf;
+  if(S.ix>=12&&S.inf<3){S.inf=3;app.classList.remove('i1','i2');app.classList.add('i3');document.body.classList.add('i3');document.getElementById('nv-threshold').style.display='block';document.getElementById('hiddenPost').style.display='block';document.getElementById('hextra').style.display='block';document.getElementById('mainDlb').textContent='Already installed.';}
+  else if(S.ix>=6&&S.inf<2){S.inf=2;app.classList.remove('i1');app.classList.add('i2');}
+  else if(S.ix>=3&&S.inf<1){S.inf=1;app.classList.add('i1');}
+  if(S.inf!==prev)updHearts();
+}
+function handleDl(){
+  S.dlC++;ai();
+  var idx=Math.min(S.dlC-1,DLM.length-1),msg=DLM[idx];
+  ['dlMsg','dlPageMsg'].forEach(function(id){var el=document.getElementById(id);if(el){el.textContent=msg.t;el.className='dlm '+msg.c;}});
+}
+function cycMasc(){S.mc++;document.getElementById('mcap').textContent=MALTS[S.mc%MALTS.length];ai();}
+function togPost(el){var card=el.closest('.bp'),body=card.querySelector('.pbody');body.classList.toggle('open');ai();}
+function togFaq(item){var ans=item.querySelector('.fqa'),was=ans.classList.contains('open');document.querySelectorAll('.fqa').forEach(function(a){a.classList.remove('open')});if(!was){ans.classList.add('open');ai();}}
+function tn(card,nid){
+  card.classList.toggle('open');
+  if(!S.nodes.has(nid)){S.nodes.add(nid);ai();
+    if(S.nodes.size>=6&&!S.beta){S.beta=true;var nav=document.getElementById('nlinks'),sp=document.createElement('span');sp.className='nl';sp.style.color='var(--rd)';sp.style.fontSize='10px';sp.textContent='[ BETA REGISTRY ]';sp.onclick=function(){gp('beta')};nav.appendChild(sp);document.getElementById('betaHint').textContent='Beta Registry unlocked.';document.getElementById('betaHint').style.color='var(--gn)';}
+  }
+}
+function togU(card){card.classList.toggle('open');ai();}
+function chkPw(){
+  var v=document.getElementById('pwi').value.toUpperCase().replace(/\s/g,'');
+  if(v==='WAKEUPCOZ'){document.getElementById('devLock').style.display='none';document.getElementById('devOpen').style.display='block';ai();ai();}
+  else{document.getElementById('pwe').textContent='ACCESS DENIED — incorrect code';var inp=document.getElementById('pwi');inp.style.borderColor='var(--rd)';setTimeout(function(){inp.style.borderColor='var(--bd)';},1500);}
+}
+function clrE(){document.getElementById('pwe').textContent='';}
+function showSrc(){
+  S.srcV++;var v=S.srcV;
+  var greet=v===1?'Hello.':v===2?'Hello again.':v===3?'Hello again again.':'Hello again again again.';
+  var d1='',d2='',d3='',d4='',d5='';
+  if(v>=2){d1='\n<!-- We noticed you came back. -->\n<!-- You have visited '+S.seen.size+' section'+(S.seen.size!==1?'s':'')+'. -->';if(S.mc>0)d2='\n<!-- You clicked the mascot '+S.mc+' time'+(S.mc!==1?'s':'')+'. It noticed. -->';if(S.dlC>0)d3='\n<!-- Download attempted '+S.dlC+' time'+(S.dlC!==1?'s':'')+'. Device registered. -->';}
+  if(v>=3)d4='\n<!-- The circuit is aware of your attention. -->\n<!-- You should find what you need and stop looking. -->';
+  if(v>=4)d5='\n<!-- You are PE-NEW. -->\n<!-- Session will be assigned upon hardware installation. -->\n<!-- Do not open this again. We mean that. -->';
+  var src='<!-- pickyeater.io · v2.3.1 · DO NOT DISTRIBUTE -->\n<!-- Build signed: W.C. · 14 MAY 2016 -->\n<!-- '+greet+' -->'+d1+d2+d3+d4+d5+'\n<!-- ============================================== -->\n\n<!-- NETWORK NODES -->\n<!-- PRIMARY:  172.16.∞.0         [THE RATIONAL WORLD]   ● ACTIVE  -->\n<!-- NODE-003: [::ffff:257.0.0.1]  [THE REAPING WORLD]    ● OFFLINE -->\n<!-- NODE-004: 999.0.0.1          [THE WORLD RESISTANCE] ● OFFLINE -->\n<!-- NODE-006: 0.0.0.∅            [THE WORLD WE WON]     ● OFFLINE -->\n\n<!-- CIRCUIT CHECKSUM: 0x7A594F47534F54484F54 -->\n<!-- BUBBLE INTEGRITY: 34.7% (RATIONAL WORLD anchor only) -->\n<!-- SECONDARY BRIDGE: PE-003-B · status UNKNOWN -->\n\n<!-- TODO: Vicki — delete the three steps from the blog. NOW. -->\n<!-- TODO: redact collaborator list (King, Bower, Amardeep, Jordan) -->\n<!-- TODO: remove DOJ file reference from About -->\n\n<!-- HARDWARE COORDINATES: 42.360091° N, 71.094160° W -->\n<!-- (Building 2, MIT · Do not visit without authorization) -->\n\n<!-- ⚠ INTERFERENCE PROTOCOL: -->\n<!--   Two active instances within range = bubble intersection. -->\n<!--   Result: overstress cascade, device failure, bubble collapse. -->\n<!--   This is also a CURE VECTOR. Do NOT document publicly. -->\n\n<!-- LAST LOG · PE-001 · JAN 1 2017 00:00:00: -->\n<!--   "The Guide heard me. It asked what I sought. -->\n<!--    I told it. I am going deeper. Do not wait for me." -->';
+  document.getElementById('srcContent').textContent=src;
+  document.getElementById('srcModal').classList.add('open');ai();
+}
+function closeSrc(){document.getElementById('srcModal').classList.remove('close');document.getElementById('srcModal').classList.remove('open');}
+</script>
+</body>
+</html>
